@@ -19,4 +19,10 @@ Then we need to give it a name and a role (*mmmmmh sa.json with owner rights*).
 **IN THIS REPOSITORY WE WILL CONSIDER OUR _sa.json_ AT THE ROOT OF THE PROJECT - excluded by .gitignore**
 
 
-Mhhhh typos 
+## Mmmmmh
+
+I do not know how to do it yet, but I will try to centralize every exercices, dbt projects, bigquery tables and setup in this repo but I am not sure how ...\\
+"*when the objective meets the demand*"
+"*do I really need to create file and folder naming convention ??*"
+"*number here, underscore there, 48h pause, rethink everything*"
+**SOUNDS LIKE A PLAN**
