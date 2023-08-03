@@ -1,5 +1,3 @@
-{{ config(materialized="table") }}
-
 with
     countries as (select * from {{ ref("stg_countries") }}),
     sources as (select * from {{ ref("stg_sources") }}),

@@ -65,3 +65,14 @@ The commands used to run this model are :
 
 Simply implemented the modularity concept : divided our main file into numerous files.
 `stg_countries` and `stg_sources` which concern a select from BQ public datasets.
+
+### Reorganise
+
+By creating folders and subfolders, we can now organise more clearly our project and models and apply business logic here.
+We also implemented *materialization* setup at top-level - within `dbt_project.yml`.
+
+### Pratice
+
+TODO
+
+But tips : *"When dbt run is executing, dbt is wrapping the select statement in the correct DDL/DML to build that model as a table/view. If that model already exists in the data warehouse, dbt will automatically drop that table or view before building the new database object. Note: If you are on BigQuery, you may need to run dbt run --full-refresh for this to take effect."*
