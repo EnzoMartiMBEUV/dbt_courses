@@ -60,3 +60,8 @@ The model, based on the same dynamics as the one from the course, is named `dim_
 The commands used to run this model are :
 `dbt run`
 `dbt run --select dim_countries``
+
+### Modularity
+
+Simply implemented the modularity concept : divided our main file into numerous files.
+`stg_countries` and `stg_sources` which concern a select from BQ public datasets.
