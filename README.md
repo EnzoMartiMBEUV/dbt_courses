@@ -50,3 +50,13 @@ Beginning of an answer : \
 - Configure connection to database
 	- Pretty much straightforward with the SA but something's off : they ask about *Development Credentials* with the following instructions : "*Enter your personal development credentials here (not your deployment credentials!). dbt will use these credentials to connect to your database on your behalf. When you're ready to deploy your dbt project to production, you'll be able to supply your production credentials separately.*"
 	- There is something by default but my idea here is to create a first dataset in BQ with a non-specific name and see what happened next (Does it go by default ? I might be able to specify the dataset later in `dbt_project.yml` or in `model` config.)
+
+## First project
+
+For the sake of this project (*DBT Fundamentals / Models*), instead of using Snowflake's dataset I found one on BQ : **gdelt-bq.extra**.
+This dataset contains info regarding countries such as *iso, fips, area, population, domains, ...* within the tables `countryinfo2` and `sourcesbycountry`.
+The model, based on the same dynamics as the one from the course, is named `dim_countries.sql`.\
+
+The commands used to run this model are :
+`dbt run`
+`dbt run --select dim_countries``
