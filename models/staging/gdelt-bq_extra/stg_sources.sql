@@ -1,4 +1,11 @@
-with
-    sources as (select countryname, fips, domain from `gdelt-bq.extra.sourcesbycountry`)
+with 
+    source as (
+        select *
+        from {{ source('gdelt-bq_extra', 'sourcesbycountry') }}
+    ),
+    sources (
+        select countryname, fips, domain 
+        from source
+    )
 select *
 from sources
