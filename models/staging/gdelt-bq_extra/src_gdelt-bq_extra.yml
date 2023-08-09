@@ -6,6 +6,10 @@ sources:
     schema: extra
     tables:
       - name: countryinfo2
+        columns:
+          - name: country
+            tests:
+              - not_null
       - name: sourcesbycountry
       #loaded_at_field: _etl_loaded_at
         #freshness:

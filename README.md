@@ -76,3 +76,36 @@ We also implemented *materialization* setup at top-level - within `dbt_project.y
 TODO
 
 But tips : *"When dbt run is executing, dbt is wrapping the select statement in the correct DDL/DML to build that model as a table/view. If that model already exists in the data warehouse, dbt will automatically drop that table or view before building the new database object. Note: If you are on BigQuery, you may need to run dbt run --full-refresh for this to take effect."*
+
+
+### Freshness
+
+For things like sources freshness or tests, I am not currently using *production type environment* raw sources.
+Thus I can only implement some code but not test it out.
+But from what I understand, we must specify, in our *source yml / specifications file*, under our source model name : `loaded_at_field: _etl_loaded_at` and then specify our freshness thresholds.
+
+### Testing
+
+- It might not be the most relevant singular test but instead of writing in comment generic tests I did implement it in my workflow.
+*However*, it's the same thing as writing `not_null` in my yml file.
+
+- Not sur if I understood everything but in order to run our tests the commands are, for example :
+    - `dbt test --select stg_countries` to test a **singular test** done on a specific model.
+        - How is this linked ? Is it because in our test we are loading data from this particular model ? Think so
+    - `dbt test --select source:gdelt-bq_extra` if we want to run our generic tests. In this case I must specify that I want to focus on my sources.
+        - Once again, is this linked thanks to our calls from our sources ? It is also the YML file where we specify our sources infos
+        - So this is the name of my file based on the name of this source (*does this make sense ?*)
+
+
+#### The `build` command
+
+We often run theses commands in that particular order :
+```dbt run dbt test```
+So it first create our models based on our DAG (stg -> dim -> agg -> ...) and then we test them (same DAG but we are adding our sources).
+What if there is an error during the execution of one of our stg models ? There could be a big issue if it concerns something like the primary key being null for example.
+**This is a problem**.
+
+A new way to run these commands is to use `dbt build`. It will go like that : 
+*test source -> run stg -> test stg -> run dim -> test dim -> ...*
+
+Like that, we are sure that **we are not building our downstream marts on top of models having failing tests.**

@@ -3,7 +3,7 @@ with
         select * 
         from {{ source("gdelt-bq_extra", "countryinfo2") }}
     ),
-    countries (
+    countries as (
         select
             country, iso, fips, capital, currency_code, currency_name, area, population
         from source
