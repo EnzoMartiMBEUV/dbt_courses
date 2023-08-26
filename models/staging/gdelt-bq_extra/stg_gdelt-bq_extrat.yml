@@ -1,0 +1,33 @@
+version: 2
+
+models:
+  - name: stg_sources
+    description: One unique source and country by row
+    #columns:
+      #- name: countryname
+        #tests:
+          #- not_null
+  - name: stg_countries
+    description: One unique country by row with various information about the country
+    columns:
+      - name: iso
+        description: represents the 3-chars code universaly used to identify the country
+      - name: currency_code
+        description: ' {{ doc("currency_code") }} '
+
+  #- name: stg_orders
+    #columns:
+      #- name: order_id
+        #tests:
+          #- unique
+          #- not_null
+      #- name: status
+        #tests:
+          #- accepted_values:
+              #values:
+                #- completed
+                #- shipped
+                #- returned
+                #- return_pending
+                #- placed
+          
