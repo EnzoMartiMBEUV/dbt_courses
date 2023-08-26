@@ -109,3 +109,18 @@ A new way to run these commands is to use `dbt build`. It will go like that :
 *test source -> run stg -> test stg -> run dim -> test dim -> ...*
 
 Like that, we are sure that **we are not building our downstream marts on top of models having failing tests.**
+
+
+### Documentation
+
+We can documente our models column by column directly in ou yml files (`stg_gdbelt-bq_extra.yml` in our case). 
+By adding a *`description`* line, we can add a small description to our model and/or ou column.
+
+But we can also deep-dive into this description part and create a dedicated _.md_ file.
+To do so, once the file is created and named (based on what we want to specify - `countries_currency_code.md` here), we can add the jinja line :
+`{% docs given_name_of_doc_block %}` and then write in markdown our specifications.
+
+Once done, to link our description to our column / model we must, in our **.yml file**, specify our link like this:
+`description: '{{ doc("given_name_of_doc_block") }}'
+
+The example is on our staging models but obviously we can specify and documente any tables (source, final, ...)
