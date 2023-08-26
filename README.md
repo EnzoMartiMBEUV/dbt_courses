@@ -124,3 +124,17 @@ Once done, to link our description to our column / model we must, in our **.yml 
 `description: '{{ doc("given_name_of_doc_block") }}'
 
 The example is on our staging models but obviously we can specify and documente any tables (source, final, ...)
+
+
+### Deployment
+
+To configure our deployment we must follow these steps:
+`(On dbt Cloud interface) Deploy > Environement (Development created by default) > Create Environment`
+
+About the specs of our new environment:
+- Name: Deployment
+- Deployment Credentials: fulfil with the info from our *specific* service account *dedicated* to the production environment + specify the schema
+    - For example I've been working on the `crash_dataset` schema the whole time, but I can create a new one that will correspond to my _production environment_.
+    - This is not the best practice, more an efficient one if we stay with the _sandbox dynamics_
+
+Then we can created jobs.
