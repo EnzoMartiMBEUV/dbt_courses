@@ -1,4 +1,4 @@
-# dbt courses training, exercices and setup
+# 1 - dbt courses training, exercices and setup
 
 In this repo I will try to _carefully_ follow all [dbt courses](https://courses.getdbt.com/collections) with their main points, exercices (and setups) !
 
@@ -138,3 +138,164 @@ About the specs of our new environment:
     - This is not the best practice, more an efficient one if we stay with the _sandbox dynamics_
 
 Then we can created jobs.
+
+---
+
+# 2 - Jinja, Macros, Packages
+
+## The more you know
+
+dbt is the combination of three different programming languages : 
+- **SQL**, for defining data transformations,
+- **YML**, for configuring, documenting and testing those transformations,
+- **Jinja** (based on Python), for templating and lineage.
+
+The pros of Jinja are to make our code more powerful, more modular and more efficient. 
+It can speed up the process of developing SQL and also enable more sophisticated operations like :
+- *Environment specific behaviour* / permission controls in our warehouse,
+- *Automated removal of deprecated* or stale model in our warehouse.
+
+The core of jinja is a pythonic templating engine. Two basic forms of Jinja syntax :
+- `{% ... %}`,  which means there are some sort of operations,
+- `{{ ... }}`, which means we are using some variables created / pointed out with Jinja.
+
+We can exploit most bascis Python data objects such as variables, lists or dictionnaries.
+
+## Syntax and examples
+
+### First steps
+
+**Create variable and attribute value:** 
+```
+{% set my_cool_string = 'wow, c\'est genial ici' %}
+```
+
+**Print our variable:** 
+```
+{{ my_cool_string }}
+```
+
+**To comment:** 
+```
+{# ...  #}
+```
+
+**Create a list:** 
+```
+{% set my_animals = ['horse', 'panther', 'lemur'] %}
+```
+
+**Access specific value of our list:** 
+```
+{{ my_animals[0] }}
+```
+
+**Access all values of our list:** 
+```
+{% for animal in my_animals %}
+    My favorite is the {{ animal }}
+{% endfor %}
+```
+
+**If condition:** 
+```
+{% set my_temperature = 37.5 %}
+
+{% if my_temprature > 36.5 %}
+    I'm feeling ok
+{% else %}
+    What should I be feeling right now, does not even make sens
+{% endif %}
+```
+
+### Merge all first steps
+
+```
+{% set foods = ['hotdog', 'carrot', 'cucumber', 'ball peper'] %}
+
+{% for food in foods %}
+    {% if food = 'hotdog' %}
+        {% set food_type = 'snack' %}
+    {% else %}
+        {% set food_type = 'vegetable' %}
+    {% endif %}
+
+    The humble {{ food }} is my favorite {{ food_type }} !
+{% endfor %}
+```
+
+**THE MORE YOU KNOW:**
+
+When printing, Jinja does not print our Jinja code but consider each line. 
+This means that in our output, each *writen* line will be space by the number of non-shown Jinja code lines.
+In order to remove this *space* with must add **-** immediatly adjacent to the **%** sign in our block to eliminte whitespace :
+```
+{%- set foods = ['hotdog', 'carrot', 'cucumber', 'ball peper'] -%}
+
+{%- for food in foods -%}
+    {%- if food = 'hotdog' -%}
+        {%- set food_type = 'snack' -%}
+    {%- else %}
+        {%- set food_type = 'vegetable' -%}
+    {%- endif -%}
+
+    The humble {{ food }} is my favorite {{ food_type }} !
+{% endfor %}
+```
+We put the *-* char in every operation blocks except the last one `{% endfor %}` which means that we leave one whitespace between each lines.
+**On a block like this `{%- for food in foods -%}` the first *-* will trim whitspace before curly brackets and the second one after.**
+
+## In production context
+
+**Original SQL:**
+
+```
+with payments as (
+   select * from {{ ref('stg_payments') }}
+),
+ 
+final as (
+   select
+       order_id,
+ 
+       sum(case when payment_method = 'bank_transfer' then amount else 0 end) as bank_transfer_amount,
+       sum(case when payment_method = 'credit_card' then amount else 0 end) as credit_card_amount,
+       sum(case when payment_method = 'coupon' then amount else 0 end) as coupon_amount,
+       sum(case when payment_method = 'gift_card' then amount else 0 end) as gift_card_amount
+ 
+   from payments
+ 
+   group by 1
+)
+ 
+select * from final
+```
+
+**Refactored Jinja + SQL:**
+
+```
+{%- set payment_methods = ['bank_transfer', 'credit_card', 'coupon', 'gift_card'] -%}
+
+with payments as (
+   select * from {{ ref('stg_payments') }}
+),
+
+final as (
+   select
+       order_id,
+       {% for payment_method in payment_methods -%}
+
+       sum(case when payment_method = '{{ payment_method }}' then amount else 0 end)
+            as {{ payment_method }}_amount
+
+       {%- if not loop.last -%}
+         ,
+       {% endif -%}
+
+       {%- endfor %}
+   from {{ ref('stg_payments') }}
+   group by 1
+)
+
+select * from final
+```
