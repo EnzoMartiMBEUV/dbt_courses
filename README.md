@@ -299,3 +299,45 @@ final as (
 
 select * from final
 ```
+
+## Macros
+
+In order to create a macro we must create a new .sql file in the macro folder.
+Name it after the name of our macro (mandatory ?), surrounds the code with the following braces:
+```
+{% macro my_macro_file_name(arg_one, arg_two=default_value) %}
+...
+{% endmacro %}
+```
+
+If we want to call our macro in our code it must be like that:
+```
+select  country,
+        {{ total_to_thousands('area') }} as area, 
+        population
+from source
+```
+### Other macro
+
+In the course about this chapter we also saw that we can create a macro in order to limit the values retrieved from the dabase.
+Like for example to not retrieve all data when we test but just select the last 3 days of data:
+```
+{% macro limit_date_in_dev(column_name, dev_day_of_data=3) %}
+{% if target.name == 'dev' %}
+where {{ column_name }} >= dateadd('day', - {{dev_day_of_data}}, current_timestamp)
+{% endif %}
+{% endmacro %}
+```
+
+### Some infos about the target name and env
+
+[Documentation about target](https://docs.getdbt.com/docs/build/custom-target-names#dbt-cloud-ide)
+
+---
+**Link from the extra-credit part of the course :**
+*Note: The default target name set up for each dbt Cloud project is default. To make the example in the video work for you, you have two choices.*
+
+- Change the code in the macro to if target.name == 'default'.
+- Change the target name of your project to dev. Click on your profile image in the top right-hand corner and select Profile. On the left-hand navigation menu under Credentials, click on the name of your project. Then click on the Edit button. For the Target Name field, change default to dev.
+- Read more in the docs here: [same link](https://docs.getdbt.com/docs/dbt-cloud/using-dbt-cloud/cloud-setting-a-custom-target-name#dbt-cloud-ide)
+

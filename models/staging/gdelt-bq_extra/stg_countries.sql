@@ -5,7 +5,7 @@ with
     ),
     countries as (
         select
-            country, iso, fips, capital, currency_code, currency_name, area, population
+            country, iso, fips, capital, currency_code, currency_name, {{ total_to_thousands('area') }} as area, population
         from source
     )
 select *
